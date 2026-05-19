@@ -1,14 +1,15 @@
 package com.fooddonation.system.dto;
 
 import com.fooddonation.system.entity.FoodStatus;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
-
+@Getter
+@Setter
 public class FoodResponseDto {
 
-    private Long id;
     private String title;
-    private String description;
     private String quantity;
     private String location;
     private LocalDateTime expiryTime;
@@ -18,9 +19,7 @@ public class FoodResponseDto {
     public FoodResponseDto(Long id, String title, String description, String quantity,
                            String location, LocalDateTime expiryTime,
                            FoodStatus status, String donorName) {
-        this.id = id;
         this.title = title;
-        this.description = description;
         this.quantity = quantity;
         this.location = location;
         this.expiryTime = expiryTime;

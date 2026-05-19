@@ -7,14 +7,18 @@ import java.util.List;
 
 public interface FoodService {
 
+    // ================= AVAILABLE FOODS (RECEIVER) =================
+    List<Food> getAvailableFoods();
 
-     List<Food> getAvailableFoods();
+    // ================= ADD FOOD (DONOR) =================
+    Food addFood(FoodRequestDto dto, String email);
 
-    Object addFood(FoodRequestDto dto, String email);
-    Object getAllAvailable();
-    Object getMyFood(String email);
-    Object updateFood(Long id, FoodRequestDto dto);
-    void deleteFood(Long id);
+    // ================= GET MY FOODS (DONOR) =================
+    List<Food> getMyFood(String email);
 
-//    List<Food> getAvailableFoods();
+    // ================= UPDATE FOOD (DONOR OWNER ONLY) =================
+    Food updateFood(Long id, FoodRequestDto dto, String email);
+
+    // ================= DELETE FOOD (DONOR OWNER ONLY) =================
+    void deleteFood(Long id, String email);
 }

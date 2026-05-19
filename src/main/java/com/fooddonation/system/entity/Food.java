@@ -20,6 +20,7 @@ public class Food {
 
     private String quantity;
     private String location;
+
     private LocalDateTime expiryTime;
 
     @Enumerated(EnumType.STRING)

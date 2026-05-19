@@ -1,43 +1,91 @@
 package com.fooddonation.system.service;
 
 import com.fooddonation.system.entity.User;
+
 import com.fooddonation.system.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.List;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService
+        implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(
+            String email
+    ) throws UsernameNotFoundException {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with email: " + email)
-                );
+        // ==========================================
+        // FIND USER BY EMAIL
+        // ==========================================
+        User user =
+                userRepository.findByEmail(email)
 
-        // ✅ SAFE ROLE HANDLING (NULL + EMPTY SAFE)
+                        .orElseThrow(() ->
+                                new UsernameNotFoundException(
+                                        "User not found with email: "
+                                                + email
+                                )
+                        );
+
+        // ==========================================
+        // SAFE ROLE HANDLING
+        // ==========================================
         String role = "ROLE_USER";
 
-        String dbRole = String.valueOf(user.getRole());
+        if (
+                user.getRole() != null
+        ) {
 
-        if (dbRole != null && !dbRole.isBlank()) {
-            role = "ROLE_" + dbRole.toUpperCase();
+            role =
+                    "ROLE_" +
+                            user.getRole()
+                                    .name()
+                                    .toUpperCase();
         }
 
+        // ==========================================
+        // RETURN USER DETAILS
+        // ==========================================
         return new org.springframework.security.core.userdetails.User(
+
+                // EMAIL
                 user.getEmail(),
+
+                // PASSWORD
                 user.getPassword(),
-                Collections.singleton(new SimpleGrantedAuthority(role))
+
+                // ACCOUNT ENABLED
+                user.isActive(),
+
+                // ACCOUNT NON EXPIRED
+                true,
+
+                // CREDENTIALS NON EXPIRED
+                true,
+
+                // ACCOUNT NON LOCKED
+                true,
+
+                // AUTHORITIES / ROLES
+                List.of(
+                        new SimpleGrantedAuthority(role)
+                )
         );
     }
 }

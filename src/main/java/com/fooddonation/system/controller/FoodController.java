@@ -2,81 +2,78 @@ package com.fooddonation.system.controller;
 
 import com.fooddonation.system.dto.FoodRequestDto;
 import com.fooddonation.system.entity.Food;
-//import com.fooddonation.system.entity.ReceiverFood;
 import com.fooddonation.system.service.FoodService;
-//import com.fooddonation.system.service.ReceiverFoodService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/food")
+@CrossOrigin(origins = "http://localhost:5173")
 public class FoodController {
 
     @Autowired
     private FoodService foodService;
 
-    // ADD FOOD
     @PostMapping
-    public ResponseEntity<?> addFood(
-            @RequestBody FoodRequestDto dto,
-            Principal principal) {
+    public ResponseEntity<?> addFood(@RequestBody FoodRequestDto dto) {
 
-        System.out.println("Add food success");
+        String email = getCurrentUser();
 
         return ResponseEntity.ok(
-                foodService.addFood(dto, principal.getName())
+                foodService.addFood(dto, email)
         );
     }
 
-    // GET ALL AVAILABLE FOODS
-    @GetMapping
-    public ResponseEntity<?> getAllFood() {
+    @GetMapping("/available")
+    public ResponseEntity<List<Food>> getAvailableFoods() {
 
         return ResponseEntity.ok(
-                foodService.getAllAvailable()
+                foodService.getAvailableFoods()
         );
     }
 
-    // GET MY FOODS
     @GetMapping("/my")
-    public ResponseEntity<?> myFood(Principal principal) {
+    public ResponseEntity<?> myFood() {
+
+        String email = getCurrentUser();
 
         return ResponseEntity.ok(
-                foodService.getMyFood(principal.getName())
+                foodService.getMyFood(email)
         );
     }
 
-    // UPDATE FOOD
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
             @PathVariable Long id,
             @RequestBody FoodRequestDto dto) {
 
+        String email = getCurrentUser();
+
         return ResponseEntity.ok(
-                foodService.updateFood(id, dto)
+                foodService.updateFood(id, dto, email)
         );
     }
 
-    // DELETE FOOD
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
 
-        foodService.deleteFood(id);
+        String email = getCurrentUser();
+
+        foodService.deleteFood(id, email);
 
         return ResponseEntity.ok("Deleted Successfully");
     }
 
-    // RECEIVER SIDE - GET AVAILABLE FOOD
-    @GetMapping("/available")
-    public ResponseEntity<List<Food>> getAvailableFoods() {
+    private String getCurrentUser() {
 
-        return ResponseEntity.ok(
-                foodService.getAvailableFoods());
+        return SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
     }
 }

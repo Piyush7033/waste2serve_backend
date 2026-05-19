@@ -21,31 +21,36 @@ public class Donation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Food name
+    // =========================
+    // FOOD DETAILS
+    // =========================
     @Column(nullable = false)
     private String foodName;
 
-    // Quantity
     @Column(nullable = false)
     private String quantity;
 
-    // Donation location
     @Column(nullable = false)
     private String location;
 
-    // Available / Pending / Completed
     @Column(nullable = false)
     private String status;
 
-    // Donation Time
+    // =========================
+    // 🔥 IMPORTANT FIX (USER LINK)
+    // =========================
+    @Column(nullable = false)
+    private String donorEmail;
+
+    // =========================
+    // TIME STAMP
+    // =========================
     @Column(name = "donated_at")
     private LocalDateTime donatedAt;
 
-    // Donor ID
-    @Column(name = "donor_id")
-    private Long donorId;
-
-    // Automatically set current time before saving
+    // =========================
+    // AUTO TIME SET
+    // =========================
     @PrePersist
     public void prePersist() {
         donatedAt = LocalDateTime.now();

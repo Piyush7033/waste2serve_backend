@@ -6,9 +6,46 @@ import java.util.List;
 
 public interface RequestService {
 
-    Request createRequest(Long foodId, String email);
+    // =====================================================
+    // CREATE REQUEST
+    // =====================================================
+    String createRequest(
+            Long foodId,
+            String email,
+            String message
+    );
 
-    List<Request> getMyRequests(String email);
+    // =====================================================
+    // GET MY REQUESTS
+    // =====================================================
+    List<Request> getMyRequests(
+            String email
+    );
 
-    Request acceptRequest(Long requestId);
+    // =====================================================
+    // GET ALL REQUESTS (ADMIN)
+    // =====================================================
+    List<Request> getAllRequests();
+
+    // =====================================================
+    // ACCEPT REQUEST
+    // =====================================================
+    String acceptRequest(
+            Long requestId
+    );
+
+    // =====================================================
+    // REJECT REQUEST
+    // =====================================================
+    String rejectRequest(
+            Long requestId
+    );
+
+    // =====================================================
+    // CANCEL REQUEST
+    // =====================================================
+    String cancelRequest(
+            Long requestId,
+            String email
+    );
 }

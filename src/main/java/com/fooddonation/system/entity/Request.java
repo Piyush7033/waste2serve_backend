@@ -21,8 +21,11 @@ public class Request {
     @ManyToOne
     private User receiver;
 
+
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
     private LocalDateTime requestTime;
+
+    private String message;
 }

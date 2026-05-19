@@ -2,7 +2,11 @@ package com.fooddonation.system.dto;
 
 
 import com.fooddonation.system.entity.Role;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UserResponseDto {
 
     private Long id;

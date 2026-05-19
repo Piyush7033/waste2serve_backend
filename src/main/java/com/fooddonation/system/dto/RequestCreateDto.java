@@ -1,18 +1,15 @@
 package com.fooddonation.system.dto;
 
 
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class RequestCreateDto {
     private Long foodId;
 
-    // getter & setter
+    private String message;
 
-    public Long getFoodId() {
-        return foodId;
-    }
-
-    public void setFoodId(Long foodId) {
-        this.foodId = foodId;
-    }
 }
 

@@ -1,9 +1,23 @@
 package com.fooddonation.system.service;
 
+import com.fooddonation.system.dto.LoginRequestDto;
+import com.fooddonation.system.dto.RegisterRequestDto;
 
-import com.fooddonation.system.dto.*;
+import java.util.Map;
 
 public interface AuthService {
-    Object register(RegisterRequestDto dto);
-    Object login(LoginRequestDto dto);
+
+    // ==========================================
+    // REGISTER USER
+    // ==========================================
+    Map<String, Object> register(
+            RegisterRequestDto dto
+    );
+
+    // ==========================================
+    // LOGIN USER
+    // ==========================================
+    Map<String, Object> login(
+            LoginRequestDto dto
+    );
 }

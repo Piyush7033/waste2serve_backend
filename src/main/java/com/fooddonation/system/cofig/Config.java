@@ -1,12 +1,14 @@
 //package com.fooddonation.system.cofig;
 //
 //import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
 //import org.springframework.web.cors.CorsConfiguration;
 //import org.springframework.web.cors.CorsConfigurationSource;
 //import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 //
 //import java.util.List;
 //
+//@Configuration
 //public class Config {
 //
 //    @Bean
@@ -15,9 +17,9 @@
 //        CorsConfiguration config = new CorsConfiguration();
 //
 //        // React frontend URL
-//        config.setAllowedOrigins(List.of("http://localhost:5173"));
+//        config.setAllowedOrigins(List.of("http://localhost:5174"));
 //
-//        // Allowed HTTP methods
+//        // HTTP methods
 //        config.setAllowedMethods(List.of(
 //                "GET",
 //                "POST",
@@ -26,13 +28,13 @@
 //                "OPTIONS"
 //        ));
 //
-//        // Allowed headers
+//        // Headers
 //        config.setAllowedHeaders(List.of("*"));
 //
-//        // Allow Authorization header (JWT)
+//        // JWT header exposure
 //        config.setExposedHeaders(List.of("Authorization"));
 //
-//        // Allow credentials
+//        // Allow cookies / JWT
 //        config.setAllowCredentials(true);
 //
 //        UrlBasedCorsConfigurationSource source =

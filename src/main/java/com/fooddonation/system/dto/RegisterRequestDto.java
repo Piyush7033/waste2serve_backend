@@ -1,43 +1,31 @@
 package com.fooddonation.system.dto;
 
 import com.fooddonation.system.entity.Role;
+import lombok.Getter;
+import lombok.Setter;
 
 public class RegisterRequestDto {
 
+    @Getter
     private String name;
+    @Getter
     private String email;
+    @Setter
+    @Getter
     private String password;
+    @Setter
     private Role role;
 
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
+        this.name = name != null ? name.trim() : null;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email != null ? email.trim().toLowerCase() : null;
     }
 
-    public String getPassword() {
-        return password;
+    public Role getRole() {
+        return role != null ? role : Role.RECEIVER; // ✅ default role safety
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Role getRole() {   // ✅ fixed
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

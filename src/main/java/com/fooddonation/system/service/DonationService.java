@@ -15,53 +15,69 @@ public class DonationService {
     @Autowired
     private DonationRepository donationRepository;
 
+    // =========================
     // SAVE DONATION
+    // =========================
     public Donation saveDonation(Donation donation) {
         return donationRepository.save(donation);
     }
 
-    // GET ALL DONATIONS
+    // =========================
+    // GET ALL DONATIONS (ADMIN)
+    // =========================
     public List<Donation> getAllDonations() {
         return donationRepository.findAll();
     }
 
-    // GET DONATION HISTORY BY DONOR ID
-    public List<Donation> getDonationHistory(Long donorId) {
-        return donationRepository.findByDonorId(donorId);
+    // =========================
+    // GET DONATION HISTORY BY USER (FIXED)
+    // =========================
+    public List<Donation> getDonationHistoryByUser(String email) {
+        return donationRepository.findByDonorEmail(email);
     }
 
+    // =========================
     // GET DONATION BY ID
+    // =========================
     public Optional<Donation> getDonationById(Long id) {
         return donationRepository.findById(id);
     }
 
+    // =========================
     // DELETE DONATION
+    // =========================
     public void deleteDonation(Long id) {
         donationRepository.deleteById(id);
     }
 
-    // GET DONATIONS BY STATUS
+    // =========================
+    // GET BY STATUS
+    // =========================
     public List<Donation> getDonationsByStatus(String status) {
         return donationRepository.findByStatus(status);
     }
 
-    // GET DONATIONS BY LOCATION
+    // =========================
+    // GET BY LOCATION
+    // =========================
     public List<Donation> getDonationsByLocation(String location) {
         return donationRepository.findByLocation(location);
     }
 
-    // SEARCH FOOD BY NAME
+    // =========================
+    // SEARCH FOOD
+    // =========================
     public List<Donation> searchFoodByName(String foodName) {
-        return donationRepository
-                .findByFoodNameContainingIgnoreCase(foodName);
+        return donationRepository.findByFoodNameContainingIgnoreCase(foodName);
     }
 
-    // UPDATE DONATION STATUS
+    // =========================
+    // UPDATE STATUS
+    // =========================
     public Donation updateDonationStatus(Long id, String status) {
 
         Donation donation = donationRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Donation not found"));
+                .orElseThrow(() -> new RuntimeException("Donation not found"));
 
         donation.setStatus(status);
 

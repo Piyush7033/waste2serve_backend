@@ -9,15 +9,23 @@ import java.util.List;
 @Repository
 public interface DonationRepository extends JpaRepository<Donation, Long> {
 
-    // Get donations by donor ID
-    List<Donation> findByDonorId(Long donorId);
+    // =========================
+    // GET BY DONOR EMAIL (MAIN FIX)
+    // =========================
+    List<Donation> findByDonorEmail(String donorEmail);
 
-    // Get donations by status
+    // =========================
+    // GET BY STATUS
+    // =========================
     List<Donation> findByStatus(String status);
 
-    // Get donations by location
+    // =========================
+    // GET BY LOCATION
+    // =========================
     List<Donation> findByLocation(String location);
 
-    // Search food by food name
+    // =========================
+    // SEARCH FOOD NAME
+    // =========================
     List<Donation> findByFoodNameContainingIgnoreCase(String foodName);
 }

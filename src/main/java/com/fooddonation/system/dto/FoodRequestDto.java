@@ -14,7 +14,5 @@ public class FoodRequestDto {
     private String location;
     private LocalDateTime expiryTime;
 
-    // getters & setters
-
 }
 
