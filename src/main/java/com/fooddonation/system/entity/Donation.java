@@ -48,6 +48,9 @@ public class Donation {
     @Column(name = "donated_at")
     private LocalDateTime donatedAt;
 
+    @Column(name = "user_id")
+    private long userId;
+
     // =========================
     // AUTO TIME SET
     // =========================
@@ -55,4 +58,7 @@ public class Donation {
     public void prePersist() {
         donatedAt = LocalDateTime.now();
     }
+
+
+
 }

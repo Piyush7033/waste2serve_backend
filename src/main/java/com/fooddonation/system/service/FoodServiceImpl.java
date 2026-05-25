@@ -2,6 +2,7 @@ package com.fooddonation.system.service;
 
 import com.fooddonation.system.dto.FoodRequestDto;
 import com.fooddonation.system.entity.*;
+import com.fooddonation.system.repository.DonationRepository;
 import com.fooddonation.system.repository.FoodRepository;
 import com.fooddonation.system.repository.UserRepository;
 
@@ -20,6 +21,9 @@ public class FoodServiceImpl implements FoodService {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private DonationRepository donorRepo;
+
     // ================= ADD FOOD =================
     @Override
     public Food addFood(FoodRequestDto dto, String email) {
@@ -36,7 +40,21 @@ public class FoodServiceImpl implements FoodService {
         food.setStatus(FoodStatus.AVAILABLE);
         food.setDonor(donor);
 
-        return foodRepo.save(food);
+        Donation donation=new Donation();
+        donation.setDonorEmail(email);
+        donation.setFoodName(dto.getTitle());
+        donation.setQuantity(dto.getQuantity());
+        donation.setLocation(dto.getLocation());
+        donation.setDonatedAt(LocalDateTime.now());
+        donation.setUserId(donor.getId());
+
+        donation.setStatus("AVAILABLE");
+
+
+        Food foodResponse = foodRepo.save(food);
+        donorRepo.save(donation);
+        return foodResponse;
+
     }
 
     // ================= AVAILABLE FOODS =================

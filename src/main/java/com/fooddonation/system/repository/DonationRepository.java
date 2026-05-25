@@ -13,6 +13,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     // GET BY DONOR EMAIL (MAIN FIX)
     // =========================
     List<Donation> findByDonorEmail(String donorEmail);
+    List<Donation> findByUserId(long userId);
 
     // =========================
     // GET BY STATUS
@@ -28,4 +29,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     // SEARCH FOOD NAME
     // =========================
     List<Donation> findByFoodNameContainingIgnoreCase(String foodName);
+
+    // ✅ FIXED METHOD (IMPORTANT)
+//
 }

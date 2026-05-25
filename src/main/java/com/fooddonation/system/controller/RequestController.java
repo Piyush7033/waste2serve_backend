@@ -25,6 +25,10 @@ public class RequestController {
     @Autowired
     private RequestService requestService;
 
+    // =====================================================
+    // CREATE REQUEST
+    // =====================================================
+
     @PostMapping("/create/{foodId}")
     @PreAuthorize("hasRole('RECEIVER')")
     public ResponseEntity<?> createRequest(
@@ -39,7 +43,8 @@ public class RequestController {
 
         try {
 
-            if (message == null || message.trim().isEmpty()) {
+            if (message == null
+                    || message.trim().isEmpty()) {
 
                 message =
                         "Food request submitted";
@@ -67,6 +72,10 @@ public class RequestController {
         }
     }
 
+    // =====================================================
+    // GET MY REQUESTS
+    // =====================================================
+
     @GetMapping("/my")
     @PreAuthorize(
             "hasAnyRole('RECEIVER','DONOR','ADMIN')"
@@ -81,6 +90,7 @@ public class RequestController {
             return ResponseEntity.ok(
 
                     requestService.getMyRequests(
+
                             principal.getName()
                     )
             );
@@ -94,6 +104,10 @@ public class RequestController {
             );
         }
     }
+
+    // =====================================================
+    // GET ALL REQUESTS
+    // =====================================================
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
@@ -115,6 +129,10 @@ public class RequestController {
             );
         }
     }
+
+    // =====================================================
+    // ACCEPT REQUEST
+    // =====================================================
 
     @PutMapping("/{id}/accept")
     @PreAuthorize(
@@ -142,6 +160,10 @@ public class RequestController {
         }
     }
 
+    // =====================================================
+    // REJECT REQUEST
+    // =====================================================
+
     @PutMapping("/{id}/reject")
     @PreAuthorize(
             "hasAnyRole('DONOR','ADMIN')"
@@ -163,6 +185,43 @@ public class RequestController {
             return ResponseEntity.badRequest().body(
 
                     "Failed to reject request : "
+                            + e.getMessage()
+            );
+        }
+    }
+
+    // =====================================================
+    // CANCEL REQUEST
+    // =====================================================
+
+    @PutMapping("/{id}/cancel")
+    @PreAuthorize(
+            "hasAnyRole('RECEIVER','ADMIN')"
+    )
+    public ResponseEntity<?> cancelRequest(
+
+            @PathVariable Long id,
+
+            Principal principal
+    ) {
+
+        try {
+
+            return ResponseEntity.ok(
+
+                    requestService.cancelRequest(
+
+                            id,
+
+                            principal.getName()
+                    )
+            );
+
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest().body(
+
+                    "Failed to cancel request : "
                             + e.getMessage()
             );
         }

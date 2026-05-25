@@ -1,6 +1,7 @@
 package com.fooddonation.system.service;
 
 import com.fooddonation.system.dto.FoodRequestDto;
+import com.fooddonation.system.entity.Donation;
 import com.fooddonation.system.entity.Food;
 
 import java.util.List;

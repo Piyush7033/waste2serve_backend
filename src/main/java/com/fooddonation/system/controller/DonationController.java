@@ -79,4 +79,16 @@ public class DonationController {
 
         return donationService.updateDonationStatus(id, status);
     }
+
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<?> getDonationHistory(@PathVariable Long userId) {
+
+        List<Donation> donations = donationService.getDonationHistory(userId);
+
+        if (donations.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body("No donation history found.");
+        }
+        return ResponseEntity.ok(donations);
+    }
 }

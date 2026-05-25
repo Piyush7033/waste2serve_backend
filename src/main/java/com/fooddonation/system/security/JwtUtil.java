@@ -16,82 +16,163 @@ import java.util.Map;
 public class JwtUtil {
 
     // ==========================================
-    // SECRET KEY (MUST BE STRONG IN PROD)
+    // SECRET KEY
     // ==========================================
-    private final String secret =
+
+    private static final String SECRET =
             "secretKeysecretKeysecretKey123456";
 
     private final Key key =
-            Keys.hmacShaKeyFor(secret.getBytes());
+            Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    // Token validity (1 day)
-    private static final long JWT_EXPIRATION = 86400000;
+    // ==========================================
+    // TOKEN EXPIRATION (1 DAY)
+    // ==========================================
+
+    private static final long JWT_EXPIRATION =
+            1000 * 60 * 60 * 24;
 
     // ==========================================
     // GENERATE TOKEN
     // ==========================================
-    public String generateToken(String email, String role) {
 
-        Map<String, Object> claims = new HashMap<>();
+    public String generateToken(
+            String email,
+            String role
+    ) {
+
+        // IMPORTANT:
+        // REMOVE ROLE_ PREFIX IF EXISTS
+
+        if (role.startsWith("ROLE_")) {
+
+            role = role.replace("ROLE_", "");
+
+        }
+
+        Map<String, Object> claims =
+                new HashMap<>();
+
         claims.put("role", role);
 
         return Jwts.builder()
+
                 .setClaims(claims)
+
                 .setSubject(email)
+
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
-                .signWith(key, SignatureAlgorithm.HS256)
+
+                .setExpiration(
+                        new Date(
+                                System.currentTimeMillis()
+                                        + JWT_EXPIRATION
+                        )
+                )
+
+                .signWith(
+                        key,
+                        SignatureAlgorithm.HS256
+                )
+
                 .compact();
     }
 
     // ==========================================
     // EXTRACT ALL CLAIMS
     // ==========================================
-    private Claims extractAllClaims(String token) {
+
+    private Claims extractAllClaims(
+            String token
+    ) {
 
         return Jwts.parserBuilder()
+
                 .setSigningKey(key)
+
                 .build()
+
                 .parseClaimsJws(token)
+
                 .getBody();
     }
 
     // ==========================================
     // EXTRACT EMAIL
     // ==========================================
-    public String extractUsername(String token) {
-        return extractAllClaims(token).getSubject();
+
+    public String extractUsername(
+            String token
+    ) {
+
+        return extractAllClaims(token)
+                .getSubject();
     }
 
     // ==========================================
     // EXTRACT ROLE
     // ==========================================
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
+
+    public String extractRole(
+            String token
+    ) {
+
+        String role =
+                extractAllClaims(token)
+                        .get("role", String.class);
+
+        // EXTRA SAFETY
+
+        if (role != null &&
+                role.startsWith("ROLE_")) {
+
+            role = role.replace("ROLE_", "");
+        }
+
+        return role;
     }
 
     // ==========================================
-    // CHECK EXPIRATION
+    // CHECK TOKEN EXPIRATION
     // ==========================================
-    public boolean isTokenExpired(String token) {
+
+    public boolean isTokenExpired(
+            String token
+    ) {
+
         return extractAllClaims(token)
+
                 .getExpiration()
+
                 .before(new Date());
     }
 
     // ==========================================
     // VALIDATE TOKEN
     // ==========================================
-    public boolean validateToken(String token, String email) {
+
+    public boolean validateToken(
+            String token,
+            String email
+    ) {
 
         try {
-            String extractedEmail = extractUsername(token);
+
+            String extractedEmail =
+                    extractUsername(token);
 
             return extractedEmail.equals(email)
-                    && !isTokenExpired(token);
+                    &&
+                    !isTokenExpired(token);
 
         } catch (Exception e) {
-            return false; // safer (prevents system crash)
+
+            System.out.println(
+                    "JWT VALIDATION ERROR: "
+                            + e.getMessage()
+            );
+
+            return false;
         }
     }
 }

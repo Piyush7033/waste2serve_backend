@@ -30,4 +30,7 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
             FoodStatus status,
             LocalDateTime time
     );
+
+
+
 }

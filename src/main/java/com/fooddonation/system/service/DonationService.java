@@ -83,4 +83,10 @@ public class DonationService {
 
         return donationRepository.save(donation);
     }
+
+    public List<Donation> getDonationHistory(Long userId) {
+        return donationRepository.findByUserId(userId);
+
+    }
+
 }

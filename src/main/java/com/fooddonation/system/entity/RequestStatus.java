@@ -1,8 +1,12 @@
 package com.fooddonation.system.entity;
 
 public enum RequestStatus {
+
     REQUESTED,
-    APPROVED,
+
+    ACCEPTED,
+
     REJECTED,
+
     CANCELLED
 }

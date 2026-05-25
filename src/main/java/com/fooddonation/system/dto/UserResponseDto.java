@@ -24,5 +24,5 @@ public class UserResponseDto {
         this.active = active;
     }
 
-    // getters
+
 }

@@ -1,7 +1,6 @@
 package com.fooddonation.system.service;
 
 import com.fooddonation.system.entity.*;
-
 import com.fooddonation.system.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,44 +28,57 @@ public class RequestServiceImpl
     // =====================================================
     // CREATE REQUEST
     // =====================================================
+
     @Override
     public String createRequest(
+
             Long foodId,
+
             String email,
+
             String message
     ) {
 
         // ================= USER =================
-        User receiver = userRepo.findByEmail(email)
 
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Receiver not found"
-                        )
-                );
+        User receiver =
+                userRepo.findByEmail(email)
+
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Receiver not found"
+                                )
+                        );
 
         // ================= FOOD =================
-        Food food = foodRepo.findById(foodId)
 
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Food not found"
-                        )
-                );
+        Food food =
+                foodRepo.findById(foodId)
+
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Food not found"
+                                )
+                        );
 
         // ================= FOOD STATUS CHECK =================
-        if (food.getStatus() != FoodStatus.AVAILABLE) {
+
+        if (food.getStatus()
+                != FoodStatus.AVAILABLE) {
 
             throw new RuntimeException(
                     "Food is not available"
             );
         }
 
-        // ================= DUPLICATE REQUEST CHECK =================
+        // ================= DUPLICATE CHECK =================
+
         boolean alreadyRequested =
 
                 requestRepo.existsByFoodIdAndReceiverId(
+
                         food.getId(),
+
                         receiver.getId()
                 );
 
@@ -78,14 +90,16 @@ public class RequestServiceImpl
         }
 
         // ================= DEFAULT MESSAGE =================
-        if (message == null ||
-                message.trim().isEmpty()) {
+
+        if (message == null
+                || message.trim().isEmpty()) {
 
             message =
                     "Food request submitted";
         }
 
         // ================= CREATE REQUEST =================
+
         Request request = new Request();
 
         request.setFood(food);
@@ -102,17 +116,20 @@ public class RequestServiceImpl
                 LocalDateTime.now()
         );
 
-        // ================= UPDATE FOOD STATUS =================
+        // ================= UPDATE FOOD =================
+
         food.setStatus(
                 FoodStatus.REQUESTED
         );
 
         // ================= SAVE =================
+
         foodRepo.save(food);
 
         requestRepo.save(request);
 
         // ================= EMAIL =================
+
         try {
 
             String adminEmail =
@@ -156,14 +173,18 @@ public class RequestServiceImpl
                             + "FeedCycle System";
 
             emailService.sendEmail(
+
                     adminEmail,
+
                     subject,
+
                     body
             );
 
         } catch (Exception e) {
 
             System.out.println(
+
                     "Email sending failed : "
                             + e.getMessage()
             );
@@ -175,8 +196,10 @@ public class RequestServiceImpl
     // =====================================================
     // GET MY REQUESTS
     // =====================================================
+
     @Override
     public List<Request> getMyRequests(
+
             String email
     ) {
 
@@ -197,6 +220,7 @@ public class RequestServiceImpl
     // =====================================================
     // GET ALL REQUESTS
     // =====================================================
+
     @Override
     public List<Request> getAllRequests() {
 
@@ -206,8 +230,10 @@ public class RequestServiceImpl
     // =====================================================
     // ACCEPT REQUEST
     // =====================================================
+
     @Override
     public String acceptRequest(
+
             Long requestId
     ) {
 
@@ -220,12 +246,14 @@ public class RequestServiceImpl
                                 )
                         );
 
-        // ================= UPDATE REQUEST =================
+        // ================= STATUS UPDATE =================
+
         request.setStatus(
-                RequestStatus.APPROVED
+                RequestStatus.ACCEPTED
         );
 
-        // ================= UPDATE FOOD =================
+        // ================= FOOD UPDATE =================
+
         Food food = request.getFood();
 
         food.setStatus(
@@ -233,6 +261,7 @@ public class RequestServiceImpl
         );
 
         // ================= SAVE =================
+
         foodRepo.save(food);
 
         requestRepo.save(request);
@@ -243,8 +272,10 @@ public class RequestServiceImpl
     // =====================================================
     // REJECT REQUEST
     // =====================================================
+
     @Override
     public String rejectRequest(
+
             Long requestId
     ) {
 
@@ -257,12 +288,14 @@ public class RequestServiceImpl
                                 )
                         );
 
-        // ================= UPDATE REQUEST =================
+        // ================= STATUS UPDATE =================
+
         request.setStatus(
                 RequestStatus.REJECTED
         );
 
-        // ================= UPDATE FOOD =================
+        // ================= FOOD UPDATE =================
+
         Food food = request.getFood();
 
         food.setStatus(
@@ -270,6 +303,7 @@ public class RequestServiceImpl
         );
 
         // ================= SAVE =================
+
         foodRepo.save(food);
 
         requestRepo.save(request);
@@ -280,13 +314,17 @@ public class RequestServiceImpl
     // =====================================================
     // CANCEL REQUEST
     // =====================================================
+
     @Override
     public String cancelRequest(
+
             Long requestId,
+
             String email
     ) {
 
         // ================= USER =================
+
         User receiver =
                 userRepo.findByEmail(email)
 
@@ -297,6 +335,7 @@ public class RequestServiceImpl
                         );
 
         // ================= REQUEST =================
+
         Request request =
                 requestRepo.findById(requestId)
 
@@ -307,6 +346,7 @@ public class RequestServiceImpl
                         );
 
         // ================= OWNER CHECK =================
+
         if (!request.getReceiver()
                 .getId()
                 .equals(receiver.getId())) {
@@ -317,20 +357,23 @@ public class RequestServiceImpl
         }
 
         // ================= STATUS CHECK =================
+
         if (request.getStatus()
                 != RequestStatus.REQUESTED) {
 
             throw new RuntimeException(
-                    "Only pending requests can be cancelled"
+                    "Only requested requests can be cancelled"
             );
         }
 
         // ================= UPDATE REQUEST =================
+
         request.setStatus(
                 RequestStatus.CANCELLED
         );
 
         // ================= UPDATE FOOD =================
+
         Food food = request.getFood();
 
         food.setStatus(
@@ -338,6 +381,7 @@ public class RequestServiceImpl
         );
 
         // ================= SAVE =================
+
         foodRepo.save(food);
 
         requestRepo.save(request);

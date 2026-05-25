@@ -27,7 +27,10 @@ public class Food {
     private FoodStatus status;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User donor;
+
+
 
 
 }
