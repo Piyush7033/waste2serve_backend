@@ -32,68 +32,54 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtFilter;
 
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 
-
+    // =========================
+    // CORS CONFIG
+    // =========================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration config =
-                new CorsConfiguration();
+        CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(
-                List.of(
-                        "http://localhost:5173",
-                        "http://localhost:3000",
-                        "https://waste2servebackend-production.up.railway.app"
-                )
-        );
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "https://your-frontend.vercel.app"
+        ));
 
-        config.setAllowedMethods(
-                List.of(
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "DELETE",
-                        "OPTIONS"
-                )
-        );
+        config.setAllowedMethods(List.of(
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
+        ));
 
-        config.setAllowedHeaders(
-                List.of("*")
-        );
+        config.setAllowedHeaders(List.of("*"));
 
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration(
-                "/**",
-                config
-        );
+        source.registerCorsConfiguration("/**", config);
 
         return source;
     }
 
+    // =========================
+    // SECURITY FILTER
+    // =========================
     @Bean
-    public SecurityFilterChain filterChain(
-            HttpSecurity http
-    ) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
 
-                .cors(cors ->
-                        cors.configurationSource(
-                                corsConfigurationSource()
-                        )
-                )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 .csrf(csrf -> csrf.disable())
 
@@ -105,17 +91,21 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        // IMPORTANT
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        .requestMatchers(
-                                "/api/auth/**"
-                        ).permitAll()
+                        // PUBLIC APIs
+                        .requestMatchers("/api/auth/**").permitAll()
 
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/food/available"
                         ).permitAll()
 
+                        // PUBLIC TEST API
+                        .requestMatchers("/").permitAll()
 
+                        // FOOD APIs
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/food/**"
@@ -140,29 +130,22 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/food/**"
-                        ).hasAnyRole(
-                                "DONOR",
-                                "RECEIVER",
-                                "ADMIN"
-                        )
-
-                        .requestMatchers(
-                                "/api/request/**"
                         ).authenticated()
 
-                        .requestMatchers(
-                                "/api/donations/**"
-                        ).hasAnyRole(
-                                "DONOR",
-                                "RECEIVER",
-                                "ADMIN"
-                        )
+                        // REQUEST APIs
+                        .requestMatchers("/api/request/**")
+                        .authenticated()
 
-                        .requestMatchers(
-                                "/api/admin/**"
-                        ).hasRole("ADMIN")
+                        // DONATION APIs
+                        .requestMatchers("/api/donations/**")
+                        .authenticated()
 
-                        .anyRequest().authenticated()
+                        // ADMIN APIs
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
+
+                        // EVERYTHING ELSE
+                        .anyRequest().permitAll()
                 )
 
                 .addFilterBefore(
