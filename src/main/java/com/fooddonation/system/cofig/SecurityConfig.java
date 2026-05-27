@@ -48,7 +48,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "https://your-frontend.vercel.app"
+                "https://waste2servefrontend-production.up.railway.app/"
         ));
 
         config.setAllowedMethods(List.of(
